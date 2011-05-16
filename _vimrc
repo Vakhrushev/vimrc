@@ -1,32 +1,61 @@
 "!
-"! @file     _vimrc
-"! @title    Конфигурация настроек для VIM 73_46
-"! @date     2011-02-22
+"! @file           _vimrc
+"! @title          Конфигурация настроек для VIM 73_46
+"! @date           2011-02-22
+"! @last modified  2011-04-24 13:00:00
 "!
 
 "Section - Создание окружения
 
 "! Убрать совместимость с Vi
   set nocompatible
+
+"! Обновление модулей
+  filetype off
+
+  set rtp+=$VIM/vundle/
+  call vundle#rc()
+  " My Bundles here:
+  " original repos on github
+  " Bundle 'tpope/vim-fugitive'
+  " vim-scripts repos
+  Bundle 'AutoComplPop'
+  Bundle 'taglist.vim'
+  " non github repos
+  Bundle 'https://github.com/mattn/zencoding-vim.git'
+  Bundle 'https://github.com/msanders/snipmate.vim.git'
+  Bundle 'https://github.com/scrooloose/nerdcommenter.git'
+
+"! Установтьб язык по умолчанию в меню
   set langmenu=none
 
-"! Раскраска кода
+"! Авто определение расширений plugin's
+  filetype plugin indent on
+
+"! Авто определение файлов
+  set smartindent
+
+"! Загрузка биндов клавиш
+  so $VIM/keys.vimrc
+
+"! Переменные 
+"!{{{1
+"! Папка HOME
+  let $HOME='z:/progs/vim/'
+"!}}}1
+
+"! Раскраска кода и компановка кнопок
   syntax on
   if has("gui_running")
     highlight clear Normal
     colorscheme zenburn
-  endif
-
-"! Загрузка Windows настроек
-  if has ('win32') || has ('win64')
-
-    "! Исходники для Windows
     so $VIM/win.vimrc
-
-    "! Папка HOME
-    let $HOME='z:/progs/vim/'
   endif
 
+
+"Section 3.07 - Визуализация текущей позиции
+"! highlight current line
+set cursorline
 
 "Section - Создание окружения для временных файлов
 if !exists('s:loaded_my_vimrc')
@@ -59,7 +88,6 @@ if !exists('s:loaded_my_vimrc')
 
 endif
 
-
 "Все файлы открываем в UTF-8
 if has("multi_byte")
  if &termencoding == ""
@@ -70,24 +98,39 @@ if has("multi_byte")
  set fileencodings=utf-8,ucs-bom,latin1
 endif
 
-
 "! Словари
   set spelllang=ru_ru,en_us                     "! Словари елка
-  set spell                                     "! Запускаем проверку сразу
+  set spellsuggest=8                            "! Количество предлагаемых вариантов"
+  set nospell                                   "! Запускаем проверку сразу не надо
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Spell checking
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Pressing ,ss will toggle and untoggle spell checking
+  map <leader>ss :setlocal spell!<cr>
+
+"Shortcuts using <leader>
+  map <leader>sn ]s
+  map <leader>sp [s
+  map <leader>sa zg
+  map <leader>s? z=
+
+
 
 "! Глобальные настройки Vim
   set keymap=russian-jcukenwin                  "! Установить key map, чтобы по Ctr+^ переключался на русский и обратно
-  set nohidden                                  "! Не очищать буфер при закрытии файла
   set iminsert=0
-  set imdisable
-  set scrolloff=5                               "! Количество строк при скроле"
-  set smartindent                               "! Авто определение файлов
+  set imsearch=0
+
+" automatically leave insert mode after 'updatetime' milliseconds of inaction
+  "au CursorHoldI * stopinsert
+
+  set shortmess+=I                              "! Не беспокоиться о детях Уганды!"
+  set nohidden                                  "! Не очищать буфер при закрытии файла
   set magic                                     "! Добавим магии
   set ignorecase                                "! Игнорировать Case при Regxp and Search
-  set mouse=a                                   "! Включить поддержку мыши
+  set mouse=a                                   "! Выключить поддержку мыши
   set autoread                                  "! Следить за изменением файла
   set history=200                               "! Запоминает изменения
-  filetype plugin indent on                     "! Авто определение расширений plugin's
   set foldenable                                "! Включаем Folding
   set fdm=marker                                "! Folding по меткам
   set laststatus=2                              "! Всегда показывать строку статуса
@@ -96,11 +139,13 @@ endif
   set guioptions-=T                             "! Спрятать tool bar
   set guioptions-=t                             "! Спрятать tear off "Ножницы"
   set guioptions-=i
+  set guioptions-=l
+  set guioptions-=L
   set nowrap                                    "! Не разрывать строку
   set textwidth=0                               "! Не Варпать текст
-  set guitablabel=%t
   set listchars=tab:»\ ,trail:·,eol:¶           "! Обозначение white strap's 
   set list                                      "! Включить listchars
+  set showtabline=2                             "! Всегда показывать Tab line"
 
 "Section 3.01 - Визуализация кода
   set number                                    "! Номера строчек
@@ -111,38 +156,43 @@ endif
   set shiftround                                "! Удалять лишние пробелы при отступе
 
 "Section 3.02 - Визуализация шрифта
-  set guifont=Consolas:h11:cRUSSIAN             "! Шрифт Consolas размер 10pt
+  set guifont=Consolas:h13:cRUSSIAN             "! Шрифт Consolas размер 10pt
   set antialias                                 "! Сглаживание шрифтов  
 
 "Section 3.06 - Визуализация поиска
   set nohlsearch                                "! Не подсвечивать результаты поиска
   set incsearch
 
-"Section 3.07 - Визуализация текущей позиции
-  set cul                                       "! highlight current line
-  hi CursorLine term=none cterm=none ctermbg=3  "! adjust color
-
 "Section 3.05 - Визуализация 
   set cmdheight=1                               "! Командная строка не может быть больше 1 строки
-  set lines=43                                  "! Линий в Главном окне  	
+  set lines=43                                  "! Линий в Главном окне
   set columns=140                               "! Колонок в Главном окне
 
-"Section 3.05 - Визуализация 
-  set cmdheight=1                               "! Командная строка не может быть больше 1 строки
-  set lines=43                                  "! Линий в Главном окне  	
-  set columns=140                               "! Колонок в Главном окне
+"Section 3.04 - Визуализация строки состояния
+  set statusline=%-65.65F\ \|A\ %2*%m%r%*\ \|E\ %{&fileencoding}\ %{((exists(\"+bomb\")\ &&\ &bomb)?\"B\":\"\")}\|F\ %{&fileformat}\ \|T\ %1*%y%*\ %=%4l/%-4L\ %3.3v\ %3.3p%%
+  hi User1 guifg=#3c687b guibg=#313633
+  hi User2 guifg=#800000 guibg=#313633
 
 " -- ctag --
-  let Tlist_Show_One_File = 1                   "! Показывать только один файл
-  let Tlist_Sort_Type = "name"                  "! Сортировать по имени
-  let Tlist_Use_Right_Window = 1                "! Панелька справа
+  let Tlist_Show_One_File=1                   "! Показывать только один файл
+  let Tlist_Sort_Type="name"                  "! Сортировать по имени
+  let Tlist_Use_Right_Window=1                "! Панелька справа
 
 " map <ctrl>+F12 to generate ctags for current folder:
   map <C-F9> :!ctags --C++-kinds=+l --C-kinds=+l -R<CR>
 
-  map <F11> :TlistToggle<cr>                    "! F11 - показать окно Taglist
-  vmap <F11> <esc>:TlistToggle<cr>              "! F11 - показать окно Taglist 
-  imap <F11> <esc>:TlistToggle<cr>              "! F11 - показать окно Taglist 
+"! F11 - показать окно Taglist
+  map <F11> :TlistToggle<cr>
+"! F11 - показать окно Taglist
+  vmap <F11> <esc>:TlistToggle<cr>
+"! F11 - показать окно Taglist 
+  imap <F11> <esc>:TlistToggle<cr>
+
+"! nerdcommenter"
+  let NERDSpaceDelims=1
+
+"! ZenCoding"
+  imap ñ <C-Y>,
 
 " add current directory's generated tags file to available tags
   set tags+=$HOME/vimfiles/tags/cpp
@@ -150,6 +200,11 @@ endif
 
 "! SnipMate dir for snippets
   let g:snippets_dir=$VIM.'/vimfiles/snippets/'
+
+"! Устанавливаем автора для Снипетов"
+  let g:snips_author = 'VVV'
+
+  let g:langpair="ru"
 
 "Section 5.00 - Keys
   imap { {}<LEFT>
@@ -163,42 +218,89 @@ endif
   nmap <s-tab> :s/^  /<cr>
   imap <s-tab> <esc>:s/^  /<cr>i
 
-"Section 5.02 - Работа с win hot-key
-  source $VIMRUNTIME/mswin.vim                  "! Сочетания клавиш как в win
-  behave mswin
+"! Вставить дату"
+  iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
 
 "Section 5.03 - Работа с _vimrc
-  map ,V :tabnew $MYVIMRC<CR>                   "! Открытие _vimrc
-  map ,v :source $MYVIMRC<CR>                   "! Перечитывание конфигов vim
+"! Открытие _vimrc
+  map ,V :tabnew $MYVIMRC<CR>
+"! Перечитывание конфигов vim
+  map ,v :source $MYVIMRC<CR>
 
 "Section 6.00 - Сборка проекта
 "Section 6.01 - Функция создания build
   map <F7> :!g++ %:p -o %:p:h:h/debug/%:t:r.exe  -std=c++0x -lpcre -lpcrecpp<CR><CR>
 
-"! Открываем файлы в новом Tab
-  map gf <C-w>gf
-
 "! Проверка php синтаксиса
-  set makeprg=z:/Progs/Server/server/php/php.exe\ -l\ %
+"!  set makeprg=z:/Progs/Server/server/php/php.exe\ -l\ %
 
 "! Сохранение сессии 
   set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
-  map <F5> :mksession! ~/data/sessions/session <cr>
-  map <C-F5> :source ~/data/sessions/session <cr>
+  map <F5> :mksession! ~/data/sessions/session<CR>
+  map <C-F5> :source ~/data/sessions/session<CR>
 
 "! Открытие во внешней программе"
-  map <F8> :silent !%<CR> 
+  map <F8> :silent !%<CR>
+"! Файловый менеджер"
+  imap <F4> <ESC>:tabnew<CR>:Explore<CR>
+  map <F4> :tabnew<CR>:Explore<CR>
 
 "! Списки TODO"
-  map <F6> :vimgrep /fixme\\|todo/j Z:\Progs\Denv\home\ball\www\**\*.php Z:\Progs\Denv\home\ball\www\**\*.html Z:\Progs\Denv\home\ball\www\**\*.js<CR>:cw<CR>  
+  map <F6> :vimgrep /fixme\\|todo/j Z:\Progs\Denv\home\ball\www\**\*.php Z:\Progs\Denv\home\ball\www\**\*.html Z:\Progs\Denv\home\ball\www\**\*.js<CR>:cw<CR>
 
 "! Юнит тесты
 "! --coverage-html dir = Папка для ХТМЛЯ
-map <F2> :!z:\Progs\Denv\usr\local\php5\PEAR\phpunit.bat  %<CR><CR> 
-
-"! Устанавливаем автора для Снипетов"
-let g:snips_author = 'VVV'
+  map <F2> :!z:\Progs\Denv\usr\local\php5\PEAR\phpunit.bat  %<CR><CR>
+  map <F3> :!z:\Progs\Denv\usr\local\php5\PEAR\phpunit.bat  z:\Progs\Denv\home\ball2\unit\<CR><CR>
 
 "! Отключаем Syntax при больших файлах
-autocmd BufWinEnter * if line2byte(line("$") + 1) > 100000 | syntax clear | endif 
+  autocmd BufWinEnter * if line2byte(line("$") + 1) > 100000 | syntax clear | endif
 
+"! При сохранении перезаписываем Last modified"
+" При записи файла или буфера все файлы php выполняют замена строки содержит last modified в строках с 1 по 10 на строку с нужным временем
+  autocmd BufWritePre,FileWritePre *.php   ks|call LM()|'s
+  function! LM()
+    if line("$") > 20
+      let l = 20
+    else
+      let l = line("$")
+    endif
+    exe "1," . l . "g/@last modified/s/@last modified.*/@last modified      " .strftime("%c")
+  endfunction
+
+"! При загрузке файла с расширением PHP будет загружен шаблон с шапкой"
+  autocmd BufNewFile *.php 0r $VIM/vimfiles/templates/php.tpl
+
+"! Наименование табов Vim
+  function! GuiTabLabel()
+    let label = ''
+    let bufnrlist = tabpagebuflist(v:lnum)
+    " Add '+' if one of the buffers in the tab page is modified
+    for bufnr in bufnrlist
+      if getbufvar(bufnr, "&modified")
+        let label = '+'
+        break
+      endif
+    endfor
+    " Append the tab number
+    let label .= v:lnum.': '
+    " Append the buffer name
+    let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
+    if name == ''
+      " give a name to no-name documents
+      if &buftype=='quickfix'
+        let name = '[Quickfix List]'
+      else
+        let name = '[No Name]'
+      endif
+    else
+      " get only the file name
+      let name = fnamemodify(name,":t")
+    endif
+    let label .= name
+    " Append the number of windows in the tab page
+    let wincount = tabpagewinnr(v:lnum, '$')
+    return label
+  endfunction
+
+  set guitablabel=%{GuiTabLabel()}
